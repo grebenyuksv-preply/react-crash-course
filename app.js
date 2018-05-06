@@ -29,8 +29,8 @@ class App extends React.Component {
 		fetchTime(state);
 	}
 	render() {
-		const { state } = this.props;
-		const { systemTime, hoursFormat, tz, serverTime } = state;
+		const { state, handleOptionChange } = this.props;
+		const { systemTime, hoursFormat, systemTZ, serverTime } = state;
 		if (!serverTime.data) {
 			return <div className="red">Loading</div>;
 		}
@@ -42,17 +42,24 @@ class App extends React.Component {
 					hoursFormat={hoursFormat}
 					onChange={handleOptionChange}
 				/>
-				Time:
-				<div>
-					<Time date={now} tz={tz} hoursFormat={hoursFormat} />
-				</div>
+				<hr />
+				Your Time:
+				<Time date={now} tz={systemTZ} hoursFormat={hoursFormat} />
+				Berlin Time:
+				<Time date={now} tz={'CET'} hoursFormat={hoursFormat} />
+				New York Time:
+				<Time
+					date={now}
+					tz={'America/New_York'}
+					hoursFormat={hoursFormat}
+				/>
 			</div>
 		);
 	}
 }
 
 const state = {
-	tz: moment.tz.guess(),
+	systemTZ: moment.tz.guess(),
 	hoursFormat: 24,
 	systemTime: null,
 	serverTime: {
@@ -96,7 +103,10 @@ function fetchTime(state) {
 
 function render() {
 	tick();
-	ReactDOM.render(<App state={state} />, document.getElementById('app'));
+	ReactDOM.render(
+		<App state={state} handleOptionChange={handleOptionChange} />,
+		document.getElementById('app'),
+	);
 }
 
 setInterval(render, 1000);
