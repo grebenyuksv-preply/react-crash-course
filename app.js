@@ -1,10 +1,8 @@
 function render() {
-	var appDiv = document.createElement('div');
-	appDiv.className = 'red';
-	appDiv.innerHTML = 'Vanilla JS div';
-
-	document.getElementById('app').innerHTML = '';
-	document.getElementById('app').appendChild(appDiv);
+	ReactDOM.render(
+		<div className="red">Div created with ReactJS + JSX</div>,
+		document.getElementById('app'),
+	);
 }
 
 render();
