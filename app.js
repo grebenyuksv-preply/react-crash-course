@@ -1,4 +1,14 @@
-var appDiv = document.createElement('div');
-appDiv.className = 'red';
-appDiv.innerHTML = 'Div created with vanilla JS';
-document.body.appendChild(appDiv);
+//	ReactJS
+//	give it a root div ...
+var div = document.createElement('div');
+document.body.appendChild(div);
+
+//	... and mount a React Component there
+var reactDiv = React.createElement(
+	'div',
+	{
+		className: 'red',
+	},
+	['Div created with ReactJS'],
+);
+ReactDOM.render(reactDiv, div);
