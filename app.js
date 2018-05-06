@@ -1,4 +1,10 @@
-var appDiv = document.createElement('div');
-appDiv.className = 'red';
-appDiv.innerHTML = 'Div created with vanilla JS';
-document.body.appendChild(appDiv);
+function render() {
+	var appDiv = document.createElement('div');
+	appDiv.className = 'red';
+	appDiv.innerHTML = 'Vanilla JS div';
+
+	document.getElementById('app').innerHTML = '';
+	document.getElementById('app').appendChild(appDiv);
+}
+
+render();
