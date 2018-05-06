@@ -10,7 +10,7 @@ export const Time = ({ date, tz, hoursFormat }) => {
 const SelectTimeFormat = ({ hoursFormat, onChange }) => (
 	<form>
 		{[12, 24].map(hoursFormatOption => (
-			<label>
+			<label key={hoursFormatOption}>
 				<input
 					type="radio"
 					value={hoursFormatOption}
@@ -23,10 +23,43 @@ const SelectTimeFormat = ({ hoursFormat, onChange }) => (
 	</form>
 );
 
+class App extends React.Component {
+	componentDidMount() {
+		const { state } = this.props;
+		fetchTime(state);
+	}
+	render() {
+		const { state } = this.props;
+		const { systemTime, hoursFormat, tz, serverTime } = state;
+		if (!serverTime.data) {
+			return <div className="red">Loading</div>;
+		}
+		const now = moment(serverTime.data + systemTime - serverTime.fetchedAt);
+		return (
+			<div>
+				Time format:
+				<SelectTimeFormat
+					hoursFormat={hoursFormat}
+					onChange={handleOptionChange}
+				/>
+				Time:
+				<div>
+					<Time date={now} tz={tz} hoursFormat={hoursFormat} />
+				</div>
+			</div>
+		);
+	}
+}
+
 const state = {
 	tz: moment.tz.guess(),
 	hoursFormat: 24,
-	now: null,
+	systemTime: null,
+	serverTime: {
+		data: null,
+		fetchedAtSystemTime: null,
+		isFetching: false,
+	},
 };
 
 function handleOptionChange(event) {
@@ -34,27 +67,36 @@ function handleOptionChange(event) {
 }
 
 function tick() {
-	state.now = moment();
+	state.systemTime = moment();
+}
+
+function fetchTime(state) {
+	const { serverTime } = state;
+	if (!serverTime.data && !serverTime.isFetching) {
+		serverTime.isFetching = true;
+		fetch('http://worldclockapi.com/api/json/utc/now').then(
+			response => {
+				if (response.ok) {
+					return response.json().then(body => {
+						serverTime.data = moment(body.currentDateTime);
+						serverTime.fetchedAt = moment();
+						serverTime.isFetching = false;
+					});
+				}
+			},
+			error => {
+				console.log('Error:', error);
+				//	retry
+				serverTime.isFetching = false;
+				fetchTime(serverTime);
+			},
+		);
+	}
 }
 
 function render() {
 	tick();
-	const { now, hoursFormat, tz } = state;
-
-	ReactDOM.render(
-		<div>
-			Time format:
-			<SelectTimeFormat
-				hoursFormat={hoursFormat}
-				onChange={handleOptionChange}
-			/>
-			Time:
-			<div className="red">
-				<Time date={now} tz={tz} hoursFormat={hoursFormat} />
-			</div>
-		</div>,
-		document.getElementById('app'),
-	);
+	ReactDOM.render(<App state={state} />, document.getElementById('app'));
 }
 
-setInterval(render);
+setInterval(render, 1000);
