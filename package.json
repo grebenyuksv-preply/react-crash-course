@@ -1,0 +1,26 @@
+{
+  "name": "react-crash-course",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "babel app.js --watch --out-file dist/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grebenyuksv-preply/react-crash-course.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/grebenyuksv-preply/react-crash-course/issues"
+  },
+  "homepage": "https://github.com/grebenyuksv-preply/react-crash-course#readme",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-react": "^6.24.1"
+  }
+}
